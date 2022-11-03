@@ -354,8 +354,8 @@ myStartupHook = do
 ------------------------------------------------------------------------
 
 main = do
-    xmproc0 <- spawnPipe "xmobar -x 0 /home/neo/.config/xmobar/xmobarrc0"
-    xmproc1 <- spawnPipe "xmobar -x 1 /home/neo/.config/xmobar/xmobarrc0"
+    xmproc0 <- spawnPipe "xmobar -x 0 /home/neo/.config/xmobar/xmobarrc0.hs"
+    xmproc1 <- spawnPipe "xmobar -x 1 /home/neo/.config/xmobar/xmobarrc0.hs"
     xmonad $ withUrgencyHook LibNotifyUrgencyHook $ ewmh (desktopConfig
         { manageHook = ( isFullscreen --> doFullFloat ) <+> manageDocks <+> myManageHook <+> manageHook desktopConfig
         , startupHook        = myStartupHook
