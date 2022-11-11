@@ -7,7 +7,7 @@
 
 Config { 
 
-   template = "%UnsafeStdinReader% }%date1% %date2% %LFPB% { %dynnetwork% %memory% %multicpu% %coretemp%%bright% <action=pavucontrol>%default:Master%</action>%kbd% %battery%"
+   template = "%UnsafeStdinReader% }%date1% %date2% %LFPB%   { %dynnetwork% %memory% %multicpu% %coretemp%%bright% <action=pavucontrol>%default:Master%</action>%kbd% %battery%|--"
    --, template = "%date3% %LFPB% %date4% | %UnsafeStdinReader% }{ %dynnetwork% %memory% %multicpu% %coretemp% %bright% <action=pavucontrol>%default:Master%</action>%kbd% %battery%"
 
 ------------------------------------------------------------------------
@@ -37,10 +37,10 @@ Config {
    , overrideRedirect = True    -- set the Override Redirect flag (Xlib)
    , pickBroadest =     False   -- choose widest display (multi-monitor)
    , persistent =       True    -- enable/disable hiding (True = disabled)
-  
+--   , position = Static { xpos = 0, ypos = 0, width = 1346, height = 20 }
 ------------------------------------------------------------------------
 
-  commands = [
+   , commands = [
         -- Run Weather "LFPB" [ "--template", "<skyCondition> | <fc=#4682B4><tempC></fc>°C | <fc=#4682B4><rh></fc>%"] 36000,
          Run Weather "LFPB" [ "--template", "<tempC>°"
                             , "--Low"     , "12"        -- units: °C
@@ -75,7 +75,7 @@ Config {
                              , "--normal"   , "darkgreen"
                              --, "--normal"   , "darkorange"
                              , "--high"     , "darkred"
-                             ] 50
+                             ] 10
 
         , Run CoreTemp       [ "--template" , "<core0>-<core1>°"
                              , "--Low"      , "55"        -- units: °C
@@ -84,7 +84,7 @@ Config {
                              --, "--low"      , "darkgreen"
                              , "--normal"   , "darkorange"
                              , "--high"     , "darkred"
-                             ] 50
+                             ] 10
                           
         , Run Memory         [ "--template" ,"<usedratio>"
                              , "--Low"      , "10"        -- units: %
@@ -93,7 +93,7 @@ Config {
 --                             , "--low"      , "darkgreen"
                              , "--normal"   , "darkorange"
                              , "--high"     , "darkred"
-                             ] 50
+                             ] 10
 
         , Run Battery        [ "--template" , "<acstatus>"
                              , "--Low"      , "20"        -- units: %
@@ -116,8 +116,8 @@ Config {
 
         --   (%F = d-m-y date, %a = day of week, %T = h:m:s time)
         --, Run Date           "<fc=#ffffff> %T</fc> %a %F" "date0" 10
-        , Run Date           "%F<fc=#ffffff> %T</fc>" "date1" 10
-        , Run Date           "%a" "date2" 50 
+        , Run Date           "%F<fc=#ffffff> %T</fc>" "date1" 01
+        , Run Date           "%a" "date2" 10 
         --, Run Date           "<fc=#ffffff>%T</fc>" "date3" 10
         --, Run Date           "%a %F" "date4" 50
       	--, Run Date "%d %b %T" "date5" 10
