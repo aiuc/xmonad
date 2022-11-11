@@ -119,6 +119,7 @@ myTerminal      = "alacritty"
 myTextEditor    = "vim"
 myFileManager	= "nemo"
 myBrowser 	= "chromium"
+myCalculator = "qalculate-gtk"
 
 myFocusFollowsMouse :: Bool
 myFocusFollowsMouse = False
@@ -168,29 +169,44 @@ instance UrgencyHook LibNotifyUrgencyHook where
 ------------------------------------------------------------------------
 
 myKeys = [ ("M-<Return>", spawn (myTerminal))
-	  ,("M-p",        spawn "dmenu_run -l 15")
-	  ,("M-e",        spawn (myFileManager))
-	  ,("M-v",        spawn "copyq toggle")
---	  ,("M-S-v",        spawn "copyq menu")
-	  ,("M-b",        spawn (myBrowser))
-	  ,("M-t",        spawn "cmatrix -ms")
-	  ,("<Print>",    spawn "maim -s | xclip -selection clipboard -t image/png")
---	  ,("<Print>",    spawn "scrot -s '/tmp/%F-%T-$wx$h.png' -e 'xclip -selection clipboard -t image/png -i $f'")
-    ,("C-M-M1-q", spawn "systemctl poweroff")
-	  ,("C-M-S-s",    spawn "./.xmonad/lock.sh")
-    ,("M-o",        spawn "obsidian")
-	  --,("M-f",       sendMessage (MT.Toggle FULL))
-	  ,("<XF86MonBrightnessUp>", spawn "brightnessctl set +15")
-	  ,("<XF86MonBrightnessDown>", spawn "brightnessctl set 15-")
+    -- SPAWN SHORTCUTS
+	  ,("M-p",                    spawn "dmenu_run -l 15")
+	  ,("M-e",                    spawn (myFileManager))
+    ,("M-S-e",                  spawn "nemo Downloads/0-shots")
+	  ,("M-v",                    spawn "copyq toggle")
+	  ,("M-b",                    spawn (myBrowser))
+	  ,("M-a",                    spawn (myCalculator))
+    ,("M-o",                    spawn "obsidian")
+	  ,("M-S-t",                  spawn (myTerminal ++ " -e btop"))
+
+    -- SCREENSHOT SHORTCUTS
+	  ,("<Print>",                spawn "flameshot gui -c -p ~/Downloads/0captures/")
+	  ,("M-<Print>",              spawn "flameshot full -c -p ~/Downloads/0captures/")
+	  ,("M-S-<Print>",            spawn "flameshot gui")
+	  ,("M-M1-<Print>",           spawn "flameshot screen -c -p ~/Downloads/0captures/")
+
+    -- SYSTEM AND XMONAD SHORTCUTS
+    ,("C-M-M1-q",               spawn "systemctl poweroff")
+
+    -- FUNCTION SHORTCUTS
+	  ,("<XF86MonBrightnessUp>",  spawn "brightnessctl set +15")
+	  ,("<XF86MonBrightnessDown>",spawn "brightnessctl set 15-")
+    ,("<XF86AudioMute>",        spawn "amixer set Master toggle")
+    ,("<XF86AudioLowerVolume>", spawn "amixer set Master 5%- unmute")
+    ,("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+ unmute")
+
+
+    --	  ,("M-t",                    spawn (myTerminal ++ "cmatrix -ms"))
+    --    ,("<XF86AudioPlay>",        spawn "mocp --play")
+    --	  ,("C-M-S-s",                spawn "./.xmonad/lock.sh")
+    --	  ,("M-S-v",        spawn "copyq menu")
+    --	  ,("<Print>",    spawn "maim -s | xclip -selection clipboard -t image/png")
+    --	  ,("<Print>",    spawn "scrot -s '/tmp/%F-%T-$wx$h.png' -e 'xclip -selection clipboard -t image/png -i $f'")
+    --,("M-f",       sendMessage (MT.Toggle FULL))
 	  --,("<KP_F7>", spawn " brillo -U 5")
     --,("<xF86XK_AudioMute>", spawn "amixer -q set Master toggle")
-    ,("<XF86AudioPlay>", spawn "mocp --play")
-    --, ("<XF86AudioPrev>", spawn "mocp --previous")
     --, ("<XF86AudioNext>", spawn "mocp --next")
-    , ("<XF86AudioMute>", spawn "amixer set Master toggle")
-    , ("<XF86AudioLowerVolume>", spawn "amixer set Master 5%- unmute")
-    , ("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+ unmute")
-
+    --, ("<XF86AudioPrev>", spawn "mocp --previous")
     ]
 
 myScratchpads :: [NamedScratchpad]
@@ -298,7 +314,9 @@ myLayout = avoidStruts (grid_t ||| tiled ||| grid_s ||| mono) ||| full
 myManageHook = composeAll
     [ className =? "mpv"            --> doRectFloat (W.RationalRect (1 % 4) (1 % 4) (1 % 2) (1 % 2))
     , className =? "copyq"            --> doRectFloat (W.RationalRect (1 % 4) (1 % 4) (1 % 2) (1 % 2))
-    , className =? "pavucontrol"    --> doCenterFloat
+    , className =? "pavucontrol"            --> doRectFloat (W.RationalRect (1 % 4) (1 % 4) (1 % 2) (1 % 2))
+    , className =? myCalculator            --> doRectFloat (W.RationalRect (1 % 4) (1 % 4) (1 % 2) (1 % 2))
+--    , className =? "pavucontrol"    --> doCenterFloat
     --, className =? "pavucontrol"    --> doCenterFloat
 --    , className =? "Gimp"           --> doFloat
     , className =? "chromium" <&&> resource =? "Toolkit" --> doFloat -- firefox pip
@@ -368,7 +386,7 @@ main = do
         , normalBorderColor  = myNormalBorderColor
         , focusedBorderColor = myFocusedBorderColor
         , logHook = dynamicLogWithPP xmobarPP  
-                       { ppOutput = \x -> hPutStrLn xmproc0 x >> hPutStrLn xmproc0 x
+                       { ppOutput = \x -> hPutStrLn xmproc0 x >> hPutStrLn xmproc1 x
 --                        { ppOutput = \x -> hPutStrLn xmproc0 x
                         , ppCurrent = xmobarColor myppCurrent ""  -- Current workspace in xmobar
                         , ppVisible = xmobarColor myppVisible ""                -- Visible but not current workspace
