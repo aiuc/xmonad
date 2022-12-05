@@ -5,7 +5,6 @@
 ------------------------------------------------------------------------
 
 
-
 ------------------------------ CONTENT ---------------------------------
 --  1. Imports
 --  2. Variables
@@ -20,7 +19,6 @@
 --  11.Main
 --  12.Default bindings
 ------------------------------------------------------------------------
-
 
 
 ------------------------------------------------------------------------
@@ -75,13 +73,13 @@ import XMonad.Hooks.StatusBar.PP
 import XMonad.Hooks.ManageHelpers (isFullscreen, doFullFloat, doCenterFloat)
 import XMonad.Hooks.ServerMode
 
-
 -- actions
 import XMonad.Actions.CopyWindow -- for dwm window style tagging
 import XMonad.Actions.UpdatePointer -- update mouse postion
 import XMonad.Actions.MouseResize
 import XMonad.Actions.CycleWS as C
 import XMonad.Actions.Promote
+import XMonad.Actions.WithAll
 
 -- layout 
 import XMonad.Layout.Accordion
@@ -110,13 +108,12 @@ import XMonad.Layout.WindowNavigation
 import qualified XMonad.Layout.ToggleLayouts as T (toggleLayouts, ToggleLayout(Toggle))
 import qualified XMonad.Layout.MultiToggle as MT (Toggle(..))
 
-
 ------------------------------------------------------------------------
 -- 2. Variables
 ------------------------------------------------------------------------
 
 myTerminal      = "alacritty"
-myTextEditor    = "vim"
+myTextEditor    = "nvim"
 myFileManager	= "nemo"
 myBrowser 	= "chromium"
 myCalculator = "qalculate-gtk"
@@ -172,29 +169,34 @@ myKeys = [ ("M-<Return>", spawn (myTerminal))
     -- SPAWN SHORTCUTS
 	  ,("M-p",                    spawn "dmenu_run -l 15")
 	  ,("M-e",                    spawn (myFileManager))
-    ,("M-S-e",                  spawn "nemo Downloads/0-shots")
 	  ,("M-v",                    spawn "copyq toggle")
-	  ,("M-b",                    spawn (myBrowser))
+	  ,("M-b",                    spawn "prime-run chromium")
+	  ,("M-S-b",                  spawn (myBrowser))
 	  ,("M-a",                    spawn (myCalculator))
-    ,("M-o",                    spawn "obsidian")
+    ,("M-o",                    spawn "prime-run obsidian")
 	  ,("M-S-t",                  spawn (myTerminal ++ " -e btop"))
 
+    -- FILEMANAGER SHORTCUTS
+    ,("C-M1-1",                 spawn "nemo Downloads/0-shots")
+
     -- SCREENSHOT SHORTCUTS
-	  ,("<Print>",                spawn "flameshot gui -c -p ~/Downloads/0captures/")
-	  ,("M-<Print>",              spawn "flameshot full -c -p ~/Downloads/0captures/")
+	  ,("<Print>",                spawn "flameshot gui -c -p ~/Downloads/0-shots/")
+	  ,("M-<Print>",              spawn "flameshot full -c -p ~/Downloads/0-shots/")
 	  ,("M-S-<Print>",            spawn "flameshot gui")
-	  ,("M-M1-<Print>",           spawn "flameshot screen -c -p ~/Downloads/0captures/")
+	  ,("M-M1-<Print>",           spawn "flameshot screen -c -p ~/Downloads/0-shots/")
 
     -- SYSTEM AND XMONAD SHORTCUTS
     ,("C-M-M1-q",               spawn "systemctl poweroff")
-
+    ,("M-M1-k",                 nextScreen)
+    ,("M-M1-j",                 prevScreen)
+    ,("C-M-M1-c",               killAll)
+    
     -- FUNCTION SHORTCUTS
 	  ,("<XF86MonBrightnessUp>",  spawn "brightnessctl set +15")
 	  ,("<XF86MonBrightnessDown>",spawn "brightnessctl set 15-")
-    ,("<XF86AudioMute>",        spawn "amixer set Master toggle")
-    ,("<XF86AudioLowerVolume>", spawn "amixer set Master 5%- unmute")
-    ,("<XF86AudioRaiseVolume>", spawn "amixer set Master 5%+ unmute")
-
+    ,("<XF86AudioMute>",        spawn "amixer set PCM toggle")
+    ,("<XF86AudioLowerVolume>", spawn "amixer set PCM 5%- unmute")
+    ,("<XF86AudioRaiseVolume>", spawn "amixer set PCM 5%+ unmute")
 
     --	  ,("M-t",                    spawn (myTerminal ++ "cmatrix -ms"))
     --    ,("<XF86AudioPlay>",        spawn "mocp --play")
@@ -233,7 +235,6 @@ vertRectCentered height = W.RationalRect offsetX offsetY width height
     width = height / 2
     offsetX = (1 - width) / 2
     offsetY = (1 - height) / 2
-
 
 ------------------------------------------------------------------------
 -- 5. Mouse bindings: default actions bound to mouse events
@@ -293,7 +294,6 @@ myLayout = avoidStruts (grid_t ||| tiled ||| grid_s ||| mono) ||| full
           $ spacingRaw True (Border 0 0 0 0) True (Border 0 0 0 0) True 
           $ Grid (16/10)
 
-
      -- bsp
      bsp = renamed [Replace "bsp"] 
          $ emptyBSP
@@ -323,7 +323,7 @@ myManageHook = composeAll
     , resource  =? "desktop_window" --> doIgnore
     , resource  =? "kdesktop"       --> doIgnore 
     , className =? "qt5ct"           --> doCenterFloat
-    , className =? "nemo"         --> doCenterFloat
+--    , className =? "nemo"         --> doCenterFloat
     , isFullscreen --> doFullFloat
     ] 
 
@@ -360,7 +360,7 @@ myStartupHook = do
             "xsetroot -cursor_name left_ptr"
           , "picom &"
           , "nitrogen --restore &"
-          , "lxsession"
+          , "prime-run lxsession"
     	    , "dunst &"
           , "copyq &"
           , "zsh &"
@@ -372,8 +372,8 @@ myStartupHook = do
 ------------------------------------------------------------------------
 
 main = do
-    xmproc0 <- spawnPipe "xmobar -x 0 /home/neo/.config/xmobar/xmobarrc0.hs"
-    xmproc1 <- spawnPipe "xmobar -x 1 /home/neo/.config/xmobar/xmobarrc0.hs"
+    xmproc0 <- spawnPipe "xmobar -x 0 ~/.config/xmobar/xmobarrc0.hs"
+    xmproc1 <- spawnPipe "xmobar -x 1 ~/.config/xmobar/xmobarrc0.hs"
     xmonad $ withUrgencyHook LibNotifyUrgencyHook $ ewmh (desktopConfig
         { manageHook = ( isFullscreen --> doFullFloat ) <+> manageDocks <+> myManageHook <+> manageHook desktopConfig
         , startupHook        = myStartupHook
@@ -400,7 +400,6 @@ main = do
                         , ppOrder  = \(ws:l:t:ex) -> [ws,l]++ex++[t]
                         } >> updatePointer (0.25, 0.25) (0.25, 0.25)
           }) `additionalKeysP` myKeys
-
 
 ------------------------------------------------------------------------
 -- 12. Default bindings - to handle errors
