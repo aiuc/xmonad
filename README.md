@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Xmonad is a  is minimal, stable, beautiful, and featureful tiling window manager. If you find yourself spending a lot of time organizing or managing windows, you may consider trying xmonad.
+Xmonad is a minimal, stable, aesthetic, and featureful tiling window manager. If you find yourself spending a lot of time organizing or managing windows, you may consider trying xmonad.
 
 However, xmonad may have a steep learning curve. It can be somewhat difficult to configure if you're new to Haskell or xmonad.
 
